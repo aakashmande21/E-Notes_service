@@ -27,19 +27,52 @@ private CategoryRepository categoryRepo;
 //        category.setName(categoryDto.getName());
 //        category.setDescription(categoryDto.getDescription());
 //        category.setIsActive(categoryDto.getIsActive());
-        
-        
-//        using ModelMapper
-       Category category = mapper.map(categoryDto, Category.class);
 
-        category.setIsDeleted(false);
-        category.setCreatedBy(1);
-        category.setCreatedOn(new Date());
-        Category saveCategory = categoryRepo.save(category);
-        if (ObjectUtils.isEmpty(saveCategory)){
-            return false;
+
+//        using ModelMapper
+//       Category category = mapper.map(categoryDto, Category.class);
+//
+//       if(ObjectUtils.isEmpty(category.getId()))
+//       {
+//           category.setIsDeleted(false);
+//           category.setCreatedBy(1);
+//           category.setCreatedOn(new Date());
+//       }
+//       else
+//       {
+//                    updateCategory(category);
+//       }
+//        Category saveCategory = categoryRepo.save(category);
+//        if (ObjectUtils.isEmpty(saveCategory)){
+//            return false;
+//        }
+//        return true;
+
+
+        Category category = mapper.map(categoryDto, Category.class);
+        if (category.getId() == null) {
+            category.setIsDeleted(false);
+            category.setCreatedBy(1);
+            category.setCreatedOn(new Date());
+        } else {
+            updateCategory(category);
         }
-        return true;
+        Category saved = categoryRepo.save(category);
+        return saved != null;
+    }
+    private void updateCategory(Category category){
+        Optional<Category> findById = categoryRepo.findById(category.getId());
+
+        if (findById.isPresent())
+        {
+            Category existCategory = findById.get();
+            category.setCreatedBy(existCategory.getCreatedBy());
+            category.setCreatedOn(existCategory.getCreatedOn());
+            category.setIsDeleted(existCategory.getIsDeleted());
+
+            category.setUpdatedBy(1);
+            category.setUpdatedOn(new Date());
+        }
     }
 
     @Override

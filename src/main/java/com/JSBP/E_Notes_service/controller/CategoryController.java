@@ -20,14 +20,15 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/save-category")
+    @PostMapping("/save")
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
+        categoryDto.setId(null);
         Boolean saveCategory = categoryService.saveCategory(categoryDto);
         if (saveCategory) {
             return new ResponseEntity<>("Saved Successfully", HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>("Not Saved", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+            return new ResponseEntity<>("Not Saved", HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
     @GetMapping("/")
